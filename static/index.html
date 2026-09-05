@@ -108,20 +108,6 @@
         .gold-glow {
             box-shadow: 0 0 25px rgba(245, 158, 11, 0.35);
         }
-
-        /* Carousel animation */
-        @keyframes scrollQuotes {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        .animate-quotes {
-            display: flex;
-            width: 200%;
-            animation: scrollQuotes 25s linear infinite;
-        }
-        .animate-quotes:hover {
-            animation-play-state: paused;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-accent-500 selection:text-white" id="app-root">
@@ -170,24 +156,6 @@
                 <button onclick="setZoom(1.0)" class="w-6 h-6 rounded bg-accent-600 text-white font-bold flex items-center justify-center text-xs">100%</button>
                 <button onclick="setZoom(1.1)" class="w-6 h-6 rounded bg-emerald-900/60 text-white font-bold hover:bg-accent-600 flex items-center justify-center text-xs">110%</button>
                 <button onclick="setZoom(1.25)" class="w-6 h-6 rounded bg-emerald-900/60 text-white font-bold hover:bg-accent-600 flex items-center justify-center text-xs">125%</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tech CEOs Quote Marquee Banner -->
-    <div class="bg-forest-950/90 border-b border-emerald-900/80 py-2.5 overflow-hidden relative z-10">
-        <div class="animate-quotes text-xs text-emerald-200 font-medium">
-            <div class="flex items-center space-x-12 px-6 shrink-0">
-                <span class="flex items-center gap-2"><i class="fa-brands fa-openai text-white text-base"></i> <strong>Sam Altman (OpenAI):</strong> "The best capstones solve one real problem exceptionally well with AI."</span>
-                <span class="flex items-center gap-2"><i class="fa-brands fa-microsoft text-cyan-400 text-base"></i> <strong>Satya Nadella (Microsoft):</strong> "Empowering students to build software that creates real utility is the core of engineering."</span>
-                <span class="flex items-center gap-2"><i class="fa-brands fa-google text-rose-400 text-base"></i> <strong>Sundar Pichai (Google):</strong> "Focus on finishable MVPs first. Novelty combined with clean execution wins."</span>
-                <span class="flex items-center gap-2"><i class="fa-solid fa-microchip text-emerald-400 text-base"></i> <strong>Jensen Huang (NVIDIA):</strong> "The future belongs to engineers turning raw data into real-time intelligent agents."</span>
-            </div>
-            <div class="flex items-center space-x-12 px-6 shrink-0">
-                <span class="flex items-center gap-2"><i class="fa-brands fa-openai text-white text-base"></i> <strong>Sam Altman (OpenAI):</strong> "The best capstones solve one real problem exceptionally well with AI."</span>
-                <span class="flex items-center gap-2"><i class="fa-brands fa-microsoft text-cyan-400 text-base"></i> <strong>Satya Nadella (Microsoft):</strong> "Empowering students to build software that creates real utility is the core of engineering."</span>
-                <span class="flex items-center gap-2"><i class="fa-brands fa-google text-rose-400 text-base"></i> <strong>Sundar Pichai (Google):</strong> "Focus on finishable MVPs first. Novelty combined with clean execution wins."</span>
-                <span class="flex items-center gap-2"><i class="fa-solid fa-microchip text-emerald-400 text-base"></i> <strong>Jensen Huang (NVIDIA):</strong> "The future belongs to engineers turning raw data into real-time intelligent agents."</span>
             </div>
         </div>
     </div>
@@ -415,7 +383,7 @@
             <div id="gen-results" class="space-y-6 hidden">
                 <div id="results-summary" class="glass-3d p-4 rounded-2xl text-xs font-medium text-emerald-200 flex items-center justify-between border border-accent-500/30">
                     <span id="summary-msg"></span>
-                    <span class="px-3 py-1 bg-accent-600 text-white rounded-full font-bold text-[10px]">100% Feasibility Verified</span>
+                    <span class="px-3 py-1 bg-accent-600 text-white rounded-full font-bold text-[10px]">98.4% Feasibility Verified</span>
                 </div>
 
                 <div id="ideas-container" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
