@@ -291,7 +291,7 @@
         <section id="page-generator" class="hidden space-y-8">
             <div class="max-w-3xl mx-auto text-center space-y-2">
                 <h2 class="text-2xl font-black text-white">Configure Your Project Profile & Constraints</h2>
-                <p class="text-xs sm:text-sm text-emerald-200/80">Select your profile level (one by one), skills, and multiple interest domains.</p>
+                <p class="text-xs sm:text-sm text-emerald-200/80">Select your profile level, skills, and interest domains (select manually).</p>
             </div>
 
             <!-- Form Card with 3D Depth -->
@@ -339,16 +339,16 @@
                                class="w-full bg-forest-950 border border-emerald-800 rounded-xl px-4 py-2.5 text-xs text-white focus:border-accent-400 focus:outline-none">
                     </div>
 
-                    <!-- Section 2: Multi-Select Interest Domains -->
+                    <!-- Section 2: Multi-Select Interest Domains (NO AUTO-SELECTION) -->
                     <div>
                         <div class="flex justify-between items-center mb-2">
                             <label class="block text-xs font-bold uppercase text-emerald-400 tracking-wider">
-                                Step 3: Interest Domain(s) (Multiple Allowed)
+                                Step 3: Interest Domain(s) (Select manually below)
                             </label>
-                            <span class="text-[11px] text-accent-400 font-semibold">Toggle any domain</span>
+                            <span class="text-[11px] text-accent-400 font-semibold">User Selection Required</span>
                         </div>
                         <div class="flex flex-wrap gap-2" id="domain-pill-group">
-                            <button type="button" onclick="toggleDomain('Software Engineering')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-accent-600 text-white border-accent-400 active-3d">Software Engineering</button>
+                            <button type="button" onclick="toggleDomain('Software Engineering')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Software Engineering</button>
                             <button type="button" onclick="toggleDomain('Data Science')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Data Science</button>
                             <button type="button" onclick="toggleDomain('NLP & LLMs')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">NLP & LLMs</button>
                             <button type="button" onclick="toggleDomain('Computer Vision')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Computer Vision</button>
@@ -502,7 +502,7 @@
     <script>
         let selectedProfile = 'Final-Year Student';
         let selectedSkills = ['Python', 'React'];
-        let selectedDomains = ['Software Engineering'];
+        let selectedDomains = []; // Starts empty so user selects manually
         let currentIdeas = [];
         let allCandidates = [];
 
@@ -624,7 +624,7 @@
         function toggleDomain(dom) {
             const idx = selectedDomains.indexOf(dom);
             if (idx > -1) {
-                if (selectedDomains.length > 1) selectedDomains.splice(idx, 1);
+                selectedDomains.splice(idx, 1);
             } else {
                 selectedDomains.push(dom);
             }
