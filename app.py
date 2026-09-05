@@ -44,6 +44,27 @@ async def get_index():
             return HTMLResponse(content=f.read())
     return HTMLResponse(content="<h1>Antigravity AI Mentor API active. Static frontend file missing.</h1>")
 
+@app.get("/ppt", response_class=HTMLResponse)
+async def get_ppt_viewer():
+    ppt_path = os.path.join(os.path.dirname(__file__), "static", "ppt.html")
+    if os.path.exists(ppt_path):
+        with open(ppt_path, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h1>PPT Viewer missing.</h1>")
+
+@app.get("/api/download-ppt")
+async def download_ppt():
+    pptx_path = os.path.join(os.path.dirname(__file__), "antigravity_presentation.pptx")
+    if not os.path.exists(pptx_path):
+        # Regenerate PPTX if not present
+        from generate_ppt import create_presentation
+        create_presentation()
+    return FileResponse(
+        path=pptx_path,
+        filename="antigravity_3d_presentation_deck.pptx",
+        media_type="application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    )
+
 @app.get("/health")
 async def health_check():
     has_api_key = bool(os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY"))
@@ -51,7 +72,8 @@ async def health_check():
         "status": "healthy",
         "app": "Antigravity AI Project Mentor",
         "ai_engine": "Gemini 2.5 Flash" if has_api_key else "Smart Fallback Matrix Engine",
-        "candidate_ideas_count": len(CANDIDATE_IDEAS)
+        "candidate_ideas_count": len(CANDIDATE_IDEAS),
+        "ppt_available": os.path.exists(os.path.join(os.path.dirname(__file__), "antigravity_presentation.pptx"))
     }
 
 @app.get("/api/candidate-ideas")

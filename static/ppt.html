@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antigravity AG — 20-Slide 3D Presentation Deck</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        black: '#000000',
+                        onyx: '#09090b',
+                        darkcard: '#082119',
+                        accent: {
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- html2pdf for PDF exporting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #000000;
+            color: #f4f4f5;
+            overflow-x: hidden;
+        }
+
+        /* 3D Glassmorphic Slide Card */
+        .slide-3d {
+            background: linear-gradient(145deg, #07261d 0%, #03130e 100%);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+            box-shadow: 
+                0 30px 40px -10px rgba(0, 0, 0, 0.9),
+                0 0 30px rgba(16, 185, 129, 0.15),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .gold-border {
+            border-color: rgba(251, 191, 36, 0.4) !important;
+            box-shadow: 0 0 35px rgba(245, 158, 11, 0.25) !important;
+        }
+
+        .btn-3d {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .btn-3d:hover {
+            transform: translateY(-2px) scale(1.03);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-accent-500 selection:text-white">
+
+    <!-- Top Floating Header -->
+    <header class="bg-black/90 border-b border-zinc-800 backdrop-blur-md sticky top-0 z-50 px-6 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.href='/'">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-accent-600 via-emerald-500 to-teal-400 p-0.5 shadow-lg shadow-accent-500/20">
+                <div class="w-full h-full bg-black rounded-[10px] flex items-center justify-center">
+                    <i class="fa-solid fa-cube text-accent-400 text-base"></i>
+                </div>
+            </div>
+            <div>
+                <span class="font-black text-base tracking-wider text-white font-mono flex items-center gap-2">
+                    ANTIGRAVITY AG <span class="text-[10px] px-2 py-0.5 rounded-full bg-accent-500/20 text-accent-400 border border-accent-500/30">20-SLIDE 3D DECK</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Tech Logos Header Bar -->
+        <div class="hidden lg:flex items-center space-x-6 text-xs text-zinc-400 font-semibold">
+            <span class="flex items-center gap-1.5"><i class="fa-brands fa-openai text-white"></i> OpenAI</span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-emerald-400"></i> FastAPI</span>
+            <span class="flex items-center gap-1.5"><i class="fa-brands fa-react text-cyan-400"></i> React</span>
+            <span class="flex items-center gap-1.5"><i class="fa-brands fa-github text-white"></i> GitHub</span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-triangle text-white"></i> Vercel</span>
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-sparkles text-amber-400"></i> Gemini</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center space-x-3">
+            <a href="/api/download-ppt" class="btn-3d px-3.5 py-1.5 rounded-xl bg-gold-500/20 text-gold-400 hover:bg-gold-500 hover:text-black font-bold text-xs border border-gold-400/40 flex items-center space-x-1.5 transition">
+                <i class="fa-solid fa-file-powerpoint text-gold-400"></i>
+                <span>Download .PPTX</span>
+            </a>
+            <button onclick="exportPresentationPDF()" class="btn-3d px-3.5 py-1.5 rounded-xl bg-zinc-800 text-white font-bold text-xs hover:bg-accent-600 transition flex items-center space-x-1.5 border border-zinc-700">
+                <i class="fa-solid fa-file-pdf text-rose-400"></i>
+                <span>Export PDF</span>
+            </button>
+            <button onclick="window.location.href='/'" class="btn-3d px-3.5 py-1.5 rounded-xl bg-accent-600 hover:bg-accent-500 text-white font-bold text-xs transition">
+                <i class="fa-solid fa-rocket mr-1"></i> Web App
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Presentation Viewer Area -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-8 flex flex-col justify-center items-center">
+
+        <!-- Slide Display Container -->
+        <div id="slide-viewport" class="w-full">
+            <div id="active-slide-card" class="slide-3d rounded-3xl p-8 sm:p-12 space-y-6 relative overflow-hidden min-h-[520px] flex flex-col justify-between">
+                <!-- Slide Header -->
+                <div class="space-y-2 border-b border-emerald-900/60 pb-4">
+                    <div class="flex items-center justify-between">
+                        <span id="slide-num-badge" class="px-3 py-1 rounded-full bg-accent-500/20 text-accent-400 text-xs font-bold font-mono border border-accent-500/30">
+                            Slide 1 / 20
+                        </span>
+                        <span id="slide-category-badge" class="text-xs font-bold text-gold-400 flex items-center gap-1.5">
+                            <i class="fa-solid fa-star"></i> Core Architecture
+                        </span>
+                    </div>
+                    <h1 id="slide-title" class="text-2xl sm:text-4xl font-black text-white tracking-tight">Title</h1>
+                    <h3 id="slide-subtitle" class="text-xs sm:text-sm font-bold text-accent-400">Subtitle</h3>
+                </div>
+
+                <!-- Slide Bullets Content -->
+                <div id="slide-bullets-container" class="space-y-3 py-2 flex-1 text-sm sm:text-base leading-relaxed text-zinc-100">
+                    <!-- Dynamic Bullets -->
+                </div>
+
+                <!-- Slide CEO Quote Footer -->
+                <div id="slide-quote-container" class="pt-4 border-t border-emerald-900/60 flex items-center space-x-3 text-xs italic text-accent-300">
+                    <i class="fa-solid fa-quote-left text-lg text-accent-400 shrink-0"></i>
+                    <p id="slide-quote-text" class="leading-snug"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide Controls Bar -->
+        <div class="w-full mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-zinc-950 p-4 rounded-2xl border border-zinc-800">
+            <!-- Navigation Controls -->
+            <div class="flex items-center space-x-2">
+                <button onclick="prevSlide()" class="btn-3d px-4 py-2 rounded-xl bg-zinc-900 hover:bg-accent-600 text-white font-bold text-xs border border-zinc-800 flex items-center gap-1">
+                    <i class="fa-solid fa-arrow-left"></i> Previous
+                </button>
+                <button onclick="nextSlide()" class="btn-3d px-4 py-2 rounded-xl bg-accent-600 hover:bg-accent-500 text-white font-bold text-xs flex items-center gap-1">
+                    Next <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <button onclick="toggleAutoplay()" id="autoplay-btn" class="btn-3d px-3 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs font-bold border border-zinc-800 flex items-center gap-1">
+                    <i class="fa-solid fa-play text-accent-400"></i> Auto-Play
+                </button>
+            </div>
+
+            <!-- Slide Progress Bar -->
+            <div class="flex-1 max-w-md mx-4">
+                <div class="flex justify-between text-xs text-zinc-400 font-mono mb-1">
+                    <span>Presentation Progress</span>
+                    <span id="progress-percent">5%</span>
+                </div>
+                <div class="w-full bg-zinc-900 h-2 rounded-full overflow-hidden border border-zinc-800">
+                    <div id="slide-progress-bar" class="bg-gradient-to-r from-accent-400 to-emerald-500 h-full w-[5%] transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Slide Direct Selector Dropdown -->
+            <div class="flex items-center space-x-2">
+                <span class="text-xs text-zinc-400 font-bold">Jump to:</span>
+                <select id="slide-select" onchange="goToSlide(parseInt(this.value))" class="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-accent-400 font-mono">
+                    <!-- Options inserted via JS -->
+                </select>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-zinc-900 py-4 text-center text-xs text-zinc-500">
+        <p>Antigravity AG 3D &bull; 20-Page Architecture & Capstone Presentation Deck.</p>
+    </footer>
+
+    <script>
+        const slides = [
+            {
+                number: 1,
+                category: "Cover & Title",
+                title: "ANTIGRAVITY AG 3D",
+                subtitle: "AI Project Idea Generator & Capstone Architect for Engineering Students",
+                bullets: [
+                    "20-Slide Comprehensive Architectural & Mentoring Presentation Deck",
+                    "Profile Scoped: Beginner Student • Intern / Junior Developer • Final-Year Capstone",
+                    "Featuring AI Top Recommendation Engine, Data Platform Badges & 60s Demo Scripts",
+                    "Live Web Application: https://3hr-promptwars.vercel.app"
+                ],
+                quote: "Engineering is the closest thing to magic that exists in the real world. — Elon Musk (CEO, Tesla & xAI)"
+            },
+            {
+                number: 2,
+                category: "Problem Statement",
+                title: "The Student Capstone Dilemma",
+                subtitle: "Why Final-Year Engineering Students Struggle with Project Selection",
+                bullets: [
+                    "Over-ambitious Scope: Selecting enterprise-scale projects that stall halfway through the semester.",
+                    "Unreachable Data Dependencies: Relying on proprietary datasets or APIs behind expensive paywalls.",
+                    "Vague MVP Definitions: Lacking an explicit feature cut and weekly sequential build order.",
+                    "Judge Presentation Gaps: Inability to structure a crisp 60-second live demo script highlighting core AI."
+                ],
+                quote: "AI will be the ultimate tool to expand human capability and accelerate scientific discovery. — Demis Hassabis (CEO, Google DeepMind)"
+            },
+            {
+                number: 3,
+                category: "Solution Overview",
+                title: "The Antigravity AG Solution",
+                subtitle: "AI-Driven Profile Scoper & Feasibility Check Engine",
+                bullets: [
+                    "Input Parameters: Known skills, multi-domain preferences, available weeks, and hardware constraints.",
+                    "Smart Profile Adapter: Adjusts complexity dynamically for Beginners, Interns, and Final-Year Students.",
+                    "Feasibility First: Enforces 9 strict constraints ensuring 100% buildable projects without data paywalls.",
+                    "Instant Output: Generates 3 tailored project ideas with an explicit AI Top Recommendation Choice."
+                ],
+                quote: "The web is the most accessible runtime on earth — shipping software in seconds changes everything. — Guillermo Rauch (CEO, Vercel)"
+            },
+            {
+                number: 4,
+                category: "Ecosystem & Logos",
+                title: "Integrated Tech & AI Ecosystem Logos",
+                subtitle: "Powered by Industry-Standard Artificial Intelligence & Cloud Platforms",
+                bullets: [
+                    "OpenAI / ChatGPT API: Structured JSON prompt execution & natural language budget guidance.",
+                    "Google Gemini 2.5 Flash: High-reasoning capstone mentoring & architectural blueprint elaboration.",
+                    "Vercel Cloud Serverless: Instant global edge deployment with Python serverless functions.",
+                    "PyTorch & Scikit-Learn: Computer vision transfer learning & machine learning classifiers.",
+                    "FastAPI & React: Async REST backend architecture and modern 3D glassmorphic user interfaces.",
+                    "GitHub REST API: Public repository diff ingestion and static code analysis integration."
+                ],
+                quote: "Building reliable, safe AI systems requires deep engineering discipline from day one. — Dario Amodei (CEO, Anthropic)"
+            },
+            {
+                number: 5,
+                category: "Profile Scoper",
+                title: "Target Profile Scoper Matrix",
+                subtitle: "Tailored Complexity Scoping across Student Experience Tiers",
+                bullets: [
+                    "Beginner Student: Pretrained models (MobileNet, OpenCV), 1-2 core features, straightforward scope.",
+                    "Intern / Junior Developer: Clean REST API endpoints, full-stack integration, industry standard tools.",
+                    "Final-Year Student: Multi-component ML pipelines, dataset validation, research novelty, judge ready.",
+                    "Dynamic Milestone Adjustment: Week-by-week build paths explicitly cite student's primary language."
+                ],
+                quote: "Software is a great combination between artistry and engineering. — Bill Gates (Co-Founder, Microsoft)"
+            },
+            {
+                number: 6,
+                category: "System Prompt",
+                title: "Structured System Prompt Architecture",
+                subtitle: "The Mentoring Brain Behind Antigravity AG",
+                bullets: [
+                    "System Persona: Direct, practical senior engineering mentor — zero buzzwords or hype.",
+                    "Constraint Enforcer: Proposes synthetic fallback datasets if ideal data sources require paywalls.",
+                    "Ethical & Privacy Shield: Explicitly flags biometric, medical, and personal data privacy risks.",
+                    "Learning Gap Minimizer: Recommends smallest learning curve path matching student skills to domain."
+                ],
+                quote: "Most of human knowledge is learned by doing and building hands-on systems. — Yann LeCun (Chief AI Scientist, Meta)"
+            },
+            {
+                number: 7,
+                category: "Output Schema",
+                title: "The 9-Field Project Output Schema",
+                subtitle: "Standardized Blueprint Structure for Every Generated Idea",
+                bullets: [
+                    "1. Title (Short, specific) | 2. One-Line Pitch | 3. Problem & Beneficiaries",
+                    "4. Core Features (3-5 MVP-first) | 5. Tech Stack with Justifications",
+                    "6. Data Sources & Data Platform Source (Kaggle, GitHub, WHO, OpenFDA)",
+                    "7. Milestones (Week-by-week path) | 8. Risk/Difficulty Flags & Ethical Warnings",
+                    "9. Stretch Feature for Bonus Marks | AI Recommendation Reason & Top Match Flag"
+                ],
+                quote: "The biggest risk is not taking any risk in a world that is changing quickly. — Mark Zuckerberg (CEO, Meta)"
+            },
+            {
+                number: 8,
+                category: "Recommendation Engine",
+                title: "AI Top Recommendation Engine",
+                subtitle: "Data-Driven Project Matching & Feasibility Scoring",
+                bullets: [
+                    "Match Analysis: Evaluates skill alignment, time budget feasibility, and presentation impact.",
+                    "Visual Highlight: Displays a gold crown banner (⭐ AI Top Recommended Choice) on the #1 match.",
+                    "Justification Statement: Provides explicit rationale of why AI recommends this specific project.",
+                    "Confidence Metrics: Verifies 100% dataset availability before presentation to judges."
+                ],
+                quote: "Execution is everything. Ideas are cheap, building real products is hard. — Tim Cook (CEO, Apple)"
+            },
+            {
+                number: 9,
+                category: "Software Engineering",
+                title: "Domain Blueprint 1 — Software Engineering",
+                subtitle: "DevMentor AI: Automated Code Reviewer for Student Repositories",
+                bullets: [
+                    "Pitch: An AI code-review assistant flagging code smells and suggesting refactors for student repos.",
+                    "Core Features: GitHub diff ingestion, static AST analysis, severity score dashboard, inline suggested diffs.",
+                    "Tech Stack: Python (FastAPI), React / Tailwind, GitHub REST API, Gemini LLM API.",
+                    "Data Platform: GitHub REST API & PyLint/ESLint open-source rule engines."
+                ],
+                quote: "Simplicity is prerequisite for reliability. — Edsger W. Dijkstra"
+            },
+            {
+                number: 10,
+                category: "Data Science",
+                title: "Domain Blueprint 2 — Data Science & ML",
+                subtitle: "SkillGap AI: Placement Predictor & Job-Readiness Analytics",
+                bullets: [
+                    "Pitch: ML analytics dashboard predicting student job readiness & recommending skill closing roadmaps.",
+                    "Core Features: Student profile feature engineering, XGBoost placement model, skill gap radar chart.",
+                    "Tech Stack: Python, scikit-learn, XGBoost, Pandas, Plotly, Streamlit / React.",
+                    "Data Platform: Kaggle Open Campus Placement Dataset & industry skill benchmarks."
+                ],
+                quote: "Without data, you're just another person with an opinion. — W. Edwards Deming"
+            },
+            {
+                number: 11,
+                category: "NLP",
+                title: "Domain Blueprint 3 — NLP & Language Models",
+                subtitle: "Antigravity AG: Capstone Project Mentor & Architecture Advisor",
+                bullets: [
+                    "Pitch: NLP mentoring system matching student profiles to feasibility-checked project blueprints.",
+                    "Core Features: Skill profile NER extraction, embedding similarity search, 9-field project brief generator.",
+                    "Tech Stack: Python, FastAPI, Gemini API, Sentence-Transformers, Tailwind CSS.",
+                    "Data Platform: Curated Open Capstone Knowledge Base across 8 core CS specializations."
+                ],
+                quote: "Language is the operating system of human thought. — Sam Altman (CEO, OpenAI)"
+            },
+            {
+                number: 12,
+                category: "Computer Vision",
+                title: "Domain Blueprint 4 — Computer Vision",
+                subtitle: "VisionTrack: Privacy-Preserving Classroom Attendance Logger",
+                bullets: [
+                    "Pitch: Campus face detection system logging attendance without saving raw facial embeddings.",
+                    "Core Features: MediaPipe face detection, head pose orientation score, CSV attendance sheet exporter.",
+                    "Tech Stack: Python, OpenCV, MediaPipe CPU engine, FastAPI, SQLite.",
+                    "Data Platform: MediaPipe Vision Engine & DAiSEE Classroom Video Dataset."
+                ],
+                quote: "Vision is the art of seeing what is invisible to others. — Jonathan Swift"
+            },
+            {
+                number: 13,
+                category: "Healthcare",
+                title: "Domain Blueprint 5 — Healthcare & Medical ML",
+                subtitle: "ArogyaAssist: Multilingual Rural Symptom Checker & Triage Bot",
+                bullets: [
+                    "Pitch: Offline-first symptom guidance app classifying triage urgency for rural clinics with medical disclaimers.",
+                    "Core Features: Conversational symptom intake, probabilistic disease classifier, urgency triage badges.",
+                    "Tech Stack: Python, scikit-learn Decision Trees, FastAPI, Tailwind CSS.",
+                    "Data Platform: Kaggle Disease-Symptom Open Dataset & WHO Guidelines."
+                ],
+                quote: "Healthcare is where technology meets human compassion directly. — Sundar Pichai (CEO, Google)"
+            },
+            {
+                number: 14,
+                category: "Fintech & Security",
+                title: "Domain Blueprint 6 — Fintech & Cyber Security",
+                subtitle: "SpendGuard Anomaly Detector & PhishShield Security Scanner",
+                bullets: [
+                    "SpendGuard: Isolation Forest financial transaction anomaly detector with AI budgeting nudges.",
+                    "PhishShield: Real-time phishing email header scanner, WHOIS domain age checker, & link expander.",
+                    "Data Platform Sources: Kaggle Synthetic Transaction Dataset & PhishTank Open API.",
+                    "Privacy First: All bank statements & email credentials processed locally in memory without disk storage."
+                ],
+                quote: "Security is not a product, but a continuous process. — Bruce Schneier"
+            },
+            {
+                number: 15,
+                category: "Sustainability",
+                title: "Domain Blueprint 7 — Sustainability & IoT",
+                subtitle: "EcoSort: Edge Waste-Sorting Assistant & Recycling Classifier",
+                bullets: [
+                    "Pitch: Camera waste classifier guiding recyclable vs compostable disposal with gamified eco-scores.",
+                    "Core Features: MobileNet image classification, disposal bin recommendation, campus eco-leaderboard.",
+                    "Tech Stack: Python, PyTorch / Transfer Learning, FastAPI, Tailwind CSS.",
+                    "Data Platform: Kaggle TrashNet Open Dataset (2,500+ labeled images)."
+                ],
+                quote: "Sustainability is no longer about doing less harm. It is about doing more good. — Jochen Zeitz"
+            },
+            {
+                number: 16,
+                category: "Deep Dive Architecture",
+                title: "Section 4 Deep-Dive Mentor Blueprint",
+                subtitle: "Actionable Implementation & Sequential Build Order",
+                bullets: [
+                    "Minimal File Tree: Standardized clean project directory layout (backend/, frontend/, requirements.txt).",
+                    "MVP Feature Cut: Explicit list of features to build first vs features to explicitly skip.",
+                    "Domain-Specific Skips: Software Eng skips OAuth orgs; Vision skips 3D matching; Healthcare skips EHR.",
+                    "Sequential Build Order: Numbered step-by-step coding sequence preventing technical dependency blocks."
+                ],
+                quote: "First, solve the problem. Then, write the code. — John Johnson"
+            },
+            {
+                number: 17,
+                category: "Blockers Registry",
+                title: "Technical Blockers Registry & 1-Line Fixes",
+                subtitle: "Pre-Emptive Debugging Solutions for Common Failure Points",
+                bullets: [
+                    "Blocker 1: Gemini API returning markdown code blocks -> Fix: Strip regex markdown fences before json.loads().",
+                    "Blocker 2: GitHub API rate limits -> Fix: Pass GitHub Personal Access Token in request headers.",
+                    "Blocker 3: CORS issues on serverless -> Fix: Add FastAPI CORSMiddleware with allow_origins=['*'].",
+                    "Blocker 4: Isolation Forest flagging fixed rent payments -> Fix: Add rule-based threshold overrides."
+                ],
+                quote: "Debugging is twice as hard as writing the code in the first place. — Brian W. Kernighan"
+            },
+            {
+                number: 18,
+                category: "Data Ethics",
+                title: "Data Platform Provenance & Privacy Ethics",
+                subtitle: "Transparent Data Grounding & Mandatory Disclaimers",
+                bullets: [
+                    "Data Platform Provenance: Every project explicitly badges its verified open data source.",
+                    "Privacy-First Processing: Camera feeds & financial CSVs processed strictly in RAM without logging.",
+                    "Medical Triage Safety: Prominent un-dismissable disclaimers: 'Educational Triage Tool Only'.",
+                    "Demographic Bias Removal: Protected attributes (gender, origin) explicitly dropped during ML training."
+                ],
+                quote: "Ethics and privacy must be engineered into software from the very first line of code."
+            },
+            {
+                number: 19,
+                category: "Judge Demo Script",
+                title: "Hackathon 60-Second Demo & 20-Min Wow Factor",
+                subtitle: "Winning Presentation Techniques for Evaluation Panels",
+                bullets: [
+                    "60-Second Judge Demo Script: Concise script highlighting input, processing pipeline, and results in < 60s.",
+                    "20-Minute Wow Factors: One-click PDF brief export, language switcher, or README.md generator.",
+                    "Judge Questions Ready: Prepared answers for model accuracy, dataset fallbacks, and deployment scaling."
+                ],
+                quote: "A demo is worth a thousand slides. Clean execution wins hackathons."
+            },
+            {
+                number: 20,
+                category: "Deployment & Conclusion",
+                title: "Live Deployment & Repository Access",
+                subtitle: "Antigravity AG 3D Capstone AI Mentor is Live in Production",
+                bullets: [
+                    "Live Production Web App: https://3hr-promptwars.vercel.app",
+                    "GitHub Repository: https://github.com/ishansharma16012007-bot/3hr-promptwars",
+                    "Localhost Engine: http://127.0.0.1:8000",
+                    "Built with FastAPI, Gemini 2.5 Flash, Tailwind CSS, 3D Glassmorphism, & Vercel Serverless."
+                ],
+                quote: "Thank you! Built for engineering students pushing the boundaries of software innovation."
+            }
+        ];
+
+        let currentIdx = 0;
+        let autoplayTimer = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initSelectDropdown();
+            renderSlide(0);
+
+            // Keyboard Arrow Listener
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === 'Space') nextSlide();
+                else if (e.key === 'ArrowLeft') prevSlide();
+            });
+        });
+
+        function initSelectDropdown() {
+            const select = document.getElementById('slide-select');
+            select.innerHTML = '';
+            slides.forEach((s, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.innerText = `Slide ${s.number}: ${s.category}`;
+                select.appendChild(opt);
+            });
+        }
+
+        function renderSlide(idx) {
+            currentIdx = idx;
+            const slide = slides[idx];
+
+            document.getElementById('slide-num-badge').innerText = `Slide ${slide.number} / 20`;
+            document.getElementById('slide-category-badge').innerHTML = `<i class="fa-solid fa-star text-gold-400"></i> ${slide.category}`;
+            document.getElementById('slide-title').innerText = slide.title;
+            document.getElementById('slide-subtitle').innerText = slide.subtitle;
+
+            const card = document.getElementById('active-slide-card');
+            if (slide.number === 1 || slide.number === 20) {
+                card.classList.add('gold-border');
+            } else {
+                card.classList.remove('gold-border');
+            }
+
+            // Bullets
+            const container = document.getElementById('slide-bullets-container');
+            container.innerHTML = (slide.bullets || []).map(b => `
+                <div class="flex items-start space-x-3 p-2 rounded-xl hover:bg-forest-950/60 transition">
+                    <i class="fa-solid fa-caret-right text-accent-400 text-lg mt-0.5 shrink-0"></i>
+                    <span>${b}</span>
+                </div>
+            `).join('');
+
+            // Quote
+            document.getElementById('slide-quote-text').innerText = slide.quote;
+
+            // Progress bar
+            const percent = Math.round(((idx + 1) / slides.length) * 100);
+            document.getElementById('slide-progress-bar').style.width = `${percent}%`;
+            document.getElementById('progress-percent').innerText = `${percent}%`;
+
+            // Update dropdown
+            document.getElementById('slide-select').value = idx;
+        }
+
+        function nextSlide() {
+            if (currentIdx < slides.length - 1) {
+                renderSlide(currentIdx + 1);
+            } else {
+                renderSlide(0); // loop
+            }
+        }
+
+        function prevSlide() {
+            if (currentIdx > 0) {
+                renderSlide(currentIdx - 1);
+            }
+        }
+
+        function goToSlide(idx) {
+            if (idx >= 0 && idx < slides.length) {
+                renderSlide(idx);
+            }
+        }
+
+        function toggleAutoplay() {
+            const btn = document.getElementById('autoplay-btn');
+            if (autoplayTimer) {
+                clearInterval(autoplayTimer);
+                autoplayTimer = null;
+                btn.innerHTML = `<i class="fa-solid fa-play text-accent-400"></i> Auto-Play`;
+                btn.classList.remove('bg-accent-600', 'text-white');
+            } else {
+                autoplayTimer = setInterval(nextSlide, 5000);
+                btn.innerHTML = `<i class="fa-solid fa-pause text-rose-400"></i> Pause`;
+                btn.classList.add('bg-accent-600', 'text-white');
+            }
+        }
+
+        function exportPresentationPDF() {
+            const viewport = document.getElementById('slide-viewport');
+            const opt = {
+                margin:       [0.4, 0.4, 0.4, 0.4],
+                filename:     `antigravity_3d_presentation_deck.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#000000' },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+            };
+            html2pdf().set(opt).from(viewport).save();
+        }
+    </script>
+</body>
+</html>
