@@ -267,7 +267,7 @@
                         <p class="text-xs text-emerald-200/70">Placement predictors, academic risk modeling, & forecasting.</p>
                     </div>
 
-                    <div onclick="selectDomainAndGo('NLP')" class="glass-3d p-5 rounded-2xl cursor-pointer space-y-2">
+                    <div onclick="selectDomainAndGo('NLP & LLMs')" class="glass-3d p-5 rounded-2xl cursor-pointer space-y-2">
                         <div class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-lg border border-purple-500/30">
                             <i class="fa-solid fa-brain"></i>
                         </div>
@@ -350,9 +350,9 @@
                         <div class="flex flex-wrap gap-2" id="domain-pill-group">
                             <button type="button" onclick="toggleDomain('Software Engineering')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-accent-600 text-white border-accent-400 active-3d">Software Engineering</button>
                             <button type="button" onclick="toggleDomain('Data Science')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Data Science</button>
-                            <button type="button" onclick="toggleDomain('NLP')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">NLP & LLMs</button>
+                            <button type="button" onclick="toggleDomain('NLP & LLMs')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">NLP & LLMs</button>
                             <button type="button" onclick="toggleDomain('Computer Vision')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Computer Vision</button>
-                            <button type="button" onclick="toggleDomain('Healthcare + ML')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Healthcare</button>
+                            <button type="button" onclick="toggleDomain('Healthcare')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Healthcare</button>
                             <button type="button" onclick="toggleDomain('Fintech')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Fintech</button>
                             <button type="button" onclick="toggleDomain('Sustainability / IoT')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Sustainability / IoT</button>
                             <button type="button" onclick="toggleDomain('Cyber Security')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Cyber Security</button>
@@ -475,6 +475,24 @@
         </section>
     </main>
 
+    <!-- Styled Popup Modal for Validation Alert -->
+    <div id="validation-modal" class="hidden fixed inset-0 z-50 bg-forest-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-3d p-6 sm:p-8 rounded-3xl max-w-md w-full border border-rose-500/40 text-center space-y-4 gold-glow">
+            <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto text-2xl border border-rose-500/30">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 class="text-lg font-black text-white">Selection Required</h3>
+            <p class="text-xs text-emerald-200/90 leading-relaxed font-medium">
+                First select the programming language and the domain, then come again.
+            </p>
+            <div class="pt-2">
+                <button onclick="closeValidationModal()" class="btn-3d w-full py-3 rounded-xl bg-accent-600 hover:bg-accent-500 text-white font-bold text-xs shadow-lg">
+                    Got it, Let me select
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="bg-forest-950 border-t border-emerald-900/80 py-6 text-center text-xs text-emerald-400/60 relative z-10">
         <p>Antigravity AG 3D Capstone AI Mentor &bull; Beginner, Intern & Final-Year Student Scoper.</p>
@@ -492,6 +510,7 @@
             initMatrixRain();
             fetchCandidates();
             updateSkillButtons();
+            updateDomainPills();
             setProfile('Final-Year Student');
         });
 
@@ -625,6 +644,10 @@
             });
         }
 
+        function closeValidationModal() {
+            document.getElementById('validation-modal').classList.add('hidden');
+        }
+
         async function fetchCandidates() {
             try {
                 const res = await fetch('/api/candidate-ideas');
@@ -639,6 +662,7 @@
         async function handleGenerate(e) {
             e.preventDefault();
 
+            // Collect Custom Skills
             const customVal = document.getElementById('custom-skills').value.trim();
             let skillsList = [...selectedSkills];
             if (customVal) {
@@ -646,9 +670,15 @@
                 skillsList = [...new Set([...skillsList, ...splits])];
             }
 
+            // POPUP VALIDATION CHECK: Require both skills and domains
+            if (skillsList.length === 0 || selectedDomains.length === 0) {
+                document.getElementById('validation-modal').classList.remove('hidden');
+                return;
+            }
+
             const payload = {
-                skills: skillsList.length ? skillsList : ['Python', 'SQL'],
-                domains: selectedDomains.length ? selectedDomains : ['Software Engineering'],
+                skills: skillsList,
+                domains: selectedDomains,
                 available_time_weeks: parseInt(document.getElementById('time-range').value),
                 team_size: parseInt(document.getElementById('team-select').value),
                 target_profile: selectedProfile,
