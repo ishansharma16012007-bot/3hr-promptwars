@@ -456,7 +456,7 @@ def elaborate_idea(data: ElaborationInput) -> ElaborationResponse:
             f"2. Build FastAPI REST endpoint `/api/process` taking student inputs",
             f"3. Implement domain processing logic in `services.py` with synthetic data fallback",
             f"4. Connect frontend web UI form to {primary_lang} backend REST API",
-            f"5. Verify edge-case error handling and test 60-second judge demo script"
+            f"5. Verify edge-case error handling and automated test coverage"
         ],
         top_3_blockers=[
             {

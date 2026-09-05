@@ -536,6 +536,10 @@
             document.getElementById(`nav-${pageId}`).classList.add('bg-emerald-900/60', 'text-accent-400', 'border-accent-500/30');
             document.getElementById(`nav-${pageId}`).classList.remove('text-emerald-200');
 
+            if (pageId === 'deepdive') {
+                checkAndRenderDeepDiveState();
+            }
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -666,7 +670,7 @@
                 `Analyzing single profile: ${selectedProfile}...`,
                 `Computing AI Top Recommendation match score...`,
                 `Building 3D milestone path in ${skillsList[0] || 'Python'}...`,
-                `Verifying data platform sources & judge demo scripts...`
+                `Verifying data platform sources & technical blocker fixes...`
             ];
             let msgIdx = 0;
 
@@ -875,11 +879,56 @@
             }
         }
 
+        function checkAndRenderDeepDiveState() {
+            const savedProj = localStorage.getItem('antigravity_saved_project');
+            const savedElab = localStorage.getItem('antigravity_saved_elab');
+            const header = document.getElementById('deepdive-header');
+            const contentDiv = document.getElementById('deepdive-content');
+
+            if (savedProj && savedElab) {
+                try {
+                    const proj = JSON.parse(savedProj);
+                    const elab = JSON.parse(savedElab);
+
+                    header.classList.remove('hidden');
+                    document.getElementById('dd-domain-badge').innerText = `${proj.domain} • ${proj.target_profile || selectedProfile}`;
+                    document.getElementById('dd-title').innerText = proj.title;
+                    document.getElementById('dd-pitch').innerText = proj.pitch;
+
+                    renderDeepDiveUI(elab);
+                    return;
+                } catch (e) {
+                    console.error("Error parsing saved project state:", e);
+                }
+            }
+
+            // In case of no selection: hide header & show placeholder
+            header.classList.add('hidden');
+            contentDiv.innerHTML = `
+                <div class="text-center py-16 space-y-4">
+                    <div class="w-16 h-16 rounded-3xl bg-accent-500/10 border border-accent-500/30 flex items-center justify-center mx-auto text-accent-400 text-3xl gold-glow">
+                        <i class="fa-solid fa-cube"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-white">No Project Selected Yet</h3>
+                    <p class="text-xs text-emerald-200/80 max-w-md mx-auto leading-relaxed font-medium">
+                        First select your experience level, preferred programming language, and interest domain in the AI Generator or Blueprints tab, then select a project blueprint to view its deep-dive implementation plan.
+                    </p>
+                    <div class="pt-2">
+                        <button onclick="navigateTo('generator')" class="btn-3d px-6 py-2.5 rounded-xl bg-accent-600 hover:bg-accent-500 text-white font-bold text-xs shadow-lg">
+                            <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> Go to AI Generator
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
         async function loadDeepDiveFromGenerated(index) {
             const idea = currentIdeas[index];
             if (!idea) return;
 
             navigateTo('deepdive');
+            const header = document.getElementById('deepdive-header');
+            header.classList.remove('hidden');
             document.getElementById('dd-domain-badge').innerText = `${idea.domain} • ${idea.target_profile || selectedProfile}`;
             document.getElementById('dd-title').innerText = idea.title;
             document.getElementById('dd-pitch').innerText = idea.pitch;
@@ -908,6 +957,11 @@
                     })
                 });
                 const elab = await res.json();
+                
+                // Save selected project & elaboration to localStorage
+                localStorage.setItem('antigravity_saved_project', JSON.stringify(idea));
+                localStorage.setItem('antigravity_saved_elab', JSON.stringify(elab));
+
                 renderDeepDiveUI(elab);
             } catch (e) {
                 contentDiv.innerHTML = `<p class="text-rose-400 font-bold text-xs">Error loading plan: ${e.message}</p>`;
@@ -919,6 +973,8 @@
             if (!cand) return;
 
             navigateTo('deepdive');
+            const header = document.getElementById('deepdive-header');
+            header.classList.remove('hidden');
             document.getElementById('dd-domain-badge').innerText = `${cand.domain} • ${cand.target_profile || 'All Levels'}`;
             document.getElementById('dd-title').innerText = cand.title;
             document.getElementById('dd-pitch').innerText = cand.pitch;
@@ -928,10 +984,12 @@
                 mvp_feature_cut: cand.core_features,
                 features_to_skip: ["OAuth user login", "Multi-region cluster"],
                 step_by_step_build_order: ["1. Build backend", "2. Connect frontend UI"],
-                top_3_blockers: [],
-                demo_script_60s: "Show judge demo in 60s.",
-                wow_factor_20min: "Add instant export button."
+                top_3_blockers: []
             };
+
+            // Save selected project & elaboration to localStorage
+            localStorage.setItem('antigravity_saved_project', JSON.stringify(cand));
+            localStorage.setItem('antigravity_saved_elab', JSON.stringify(elab));
 
             renderDeepDiveUI(elab);
         }
@@ -1011,23 +1069,6 @@
                             <i class="fa-solid fa-bug text-rose-400"></i> 4. Top 3 Technical Blockers & 1-Line Fixes
                         </h4>
                         <div class="space-y-2">${blockersHtml}</div>
-                    </div>
-
-                    <!-- Section 5 & 6: Demo Script & Wow Factor -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/30 space-y-1.5">
-                            <h4 class="font-bold text-xs uppercase text-blue-300 flex items-center gap-1.5">
-                                <i class="fa-solid fa-stopwatch text-blue-400"></i> 60-Second Judge Demo Script:
-                            </h4>
-                            <p class="text-xs text-blue-100 leading-relaxed italic">"${elab.demo_script_60s}"</p>
-                        </div>
-
-                        <div class="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30 space-y-1.5">
-                            <h4 class="font-bold text-xs uppercase text-purple-300 flex items-center gap-1.5">
-                                <i class="fa-solid fa-wand-magic text-purple-400"></i> 20-Min "Wow Factor" Addition:
-                            </h4>
-                            <p class="text-xs text-purple-100 leading-relaxed">${elab.wow_factor_20min}</p>
-                        </div>
                     </div>
 
                 </div>

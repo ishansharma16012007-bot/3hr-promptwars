@@ -241,17 +241,6 @@ def create_presentation():
             ],
             "quote": "Ethics and privacy must be engineered into software from the very first line of code."
         },
-        # Slide 19
-        {
-            "title": "Hackathon 60-Second Demo & 20-Min Wow Factor",
-            "subtitle": "Winning Presentation Techniques for Evaluation Panels",
-            "bullets": [
-                "60-Second Judge Demo Script: Concise script highlighting input, processing pipeline, and results in < 60s.",
-                "20-Minute Wow Factors: One-click PDF brief export, language switcher, or README.md generator.",
-                "Judge Questions Ready: Prepared answers for model accuracy, dataset fallbacks, and deployment scaling."
-            ],
-            "quote": "A demo is worth a thousand slides. Clean execution wins hackathons."
-        },
         # Slide 20
         {
             "title": "Live Deployment & Repository Access",
