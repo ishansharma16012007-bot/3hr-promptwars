@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -22,7 +22,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS for local development
+# Enable CORS for Vercel & local development
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -36,12 +36,13 @@ static_dir = os.path.join(os.path.dirname(__file__), "static")
 if os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def get_index():
-    index_path = os.path.join(static_dir, "index.html")
+    index_path = os.path.join(os.path.dirname(__file__), "static", "index.html")
     if os.path.exists(index_path):
-        return FileResponse(index_path)
-    return {"message": "Antigravity AI Mentor API active. Static frontend file missing."}
+        with open(index_path, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h1>Antigravity AI Mentor API active. Static frontend file missing.</h1>")
 
 @app.get("/health")
 async def health_check():
@@ -55,7 +56,7 @@ async def health_check():
 
 @app.get("/api/candidate-ideas")
 async def get_candidate_ideas():
-    """Returns the 7 pre-curated reference domain project ideas."""
+    """Returns the 8 pre-curated reference domain project ideas."""
     return {"candidate_ideas": CANDIDATE_IDEAS}
 
 @app.post("/api/generate", response_model=GenerationResponse)
