@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antigravity AG — 3D AI Project Idea Generator & Mentor</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        },
+                        forest: {
+                            800: '#043427',
+                            900: '#02231a',
+                            950: '#011711',
+                        },
+                        accent: {
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- html2pdf for PDF exporting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: radial-gradient(circle at 50% 0%, #064e3b 0%, #022c22 45%, #011711 100%);
+            background-attachment: fixed;
+            color: #ecfdf5;
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: top center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Matrix Canvas Background */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
+        }
+
+        /* 3D Glassmorphic Cards */
+        .glass-3d {
+            background: rgba(4, 52, 39, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(52, 211, 153, 0.18);
+            box-shadow: 
+                0 20px 25px -5px rgba(0, 0, 0, 0.5),
+                0 8px 10px -6px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-3d:hover {
+            transform: translateY(-6px) scale(1.015) rotateX(1deg);
+            border-color: rgba(52, 211, 153, 0.45);
+            box-shadow: 
+                0 25px 30px -5px rgba(0, 0, 0, 0.6),
+                0 0 25px rgba(16, 185, 129, 0.3),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        /* 3D Pop Selection Effect */
+        .btn-3d {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn-3d.active-3d {
+            transform: translateY(-3px) scale(1.04);
+            background-color: #059669 !important;
+            border-color: #34d399 !important;
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.6), inset 0 -2px 0 rgba(0,0,0,0.3) !important;
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.35);
+        }
+
+        /* Carousel animation */
+        @keyframes scrollQuotes {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-quotes {
+            display: flex;
+            width: 200%;
+            animation: scrollQuotes 25s linear infinite;
+        }
+        .animate-quotes:hover {
+            animation-play-state: paused;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-accent-500 selection:text-white" id="app-root">
+
+    <!-- Matrix 0 and 1 Bits Canvas Background -->
+    <canvas id="matrix-canvas"></canvas>
+
+    <!-- Top Floating Zoom & Controls Bar -->
+    <div class="bg-forest-900/90 border-b border-emerald-800/50 backdrop-blur-md sticky top-0 z-50 px-4 py-2 flex items-center justify-between text-xs">
+        <div class="max-w-7xl mx-auto w-full flex items-center justify-between">
+            <!-- 3D Professional Logo Crest -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 via-accent-500 to-teal-400 p-0.5 shadow-lg shadow-accent-500/20 transform rotate-3 hover:rotate-0 transition">
+                    <div class="w-full h-full bg-forest-950 rounded-[10px] flex items-center justify-center">
+                        <i class="fa-solid fa-cube text-accent-400 text-lg"></i>
+                    </div>
+                </div>
+                <div>
+                    <span class="font-black text-lg tracking-wider text-white flex items-center gap-1.5 font-mono">
+                        ANTIGRAVITY <span class="text-[10px] px-2 py-0.5 rounded-full bg-accent-500/20 text-accent-400 border border-accent-500/30">AG 3D</span>
+                    </span>
+                    <p class="text-[10px] text-emerald-400/80 font-medium">AI Capstone Architect & Scoper</p>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <nav class="hidden md:flex items-center space-x-1 bg-forest-950/80 p-1 rounded-xl border border-emerald-800/60">
+                <button onclick="navigateTo('home')" id="nav-home" class="px-3.5 py-1.5 rounded-lg font-bold text-accent-400 bg-emerald-900/60 border border-accent-500/30 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-house"></i><span>Home</span>
+                </button>
+                <button onclick="navigateTo('generator')" id="nav-generator" class="px-3.5 py-1.5 rounded-lg font-bold text-emerald-200 hover:text-white transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles text-accent-400"></i><span>AI Generator</span>
+                </button>
+                <button onclick="navigateTo('candidates')" id="nav-candidates" class="px-3.5 py-1.5 rounded-lg font-bold text-emerald-200 hover:text-white transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-layer-group text-teal-400"></i><span>Curated Blueprints</span>
+                </button>
+                <button onclick="navigateTo('deepdive')" id="nav-deepdive" class="px-3.5 py-1.5 rounded-lg font-bold text-emerald-200 hover:text-white transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-code text-gold-400"></i><span>Deep Dive</span>
+                </button>
+            </nav>
+
+            <!-- Interactive Zoom Controls Widget -->
+            <div class="flex items-center space-x-2 bg-forest-950/80 px-3 py-1.5 rounded-xl border border-emerald-800/60">
+                <span class="text-[11px] text-emerald-400 font-semibold"><i class="fa-solid fa-magnifying-glass"></i> Zoom:</span>
+                <button onclick="setZoom(0.9)" class="w-6 h-6 rounded bg-emerald-900/60 text-white font-bold hover:bg-accent-600 flex items-center justify-center text-xs">90%</button>
+                <button onclick="setZoom(1.0)" class="w-6 h-6 rounded bg-accent-600 text-white font-bold flex items-center justify-center text-xs">100%</button>
+                <button onclick="setZoom(1.1)" class="w-6 h-6 rounded bg-emerald-900/60 text-white font-bold hover:bg-accent-600 flex items-center justify-center text-xs">110%</button>
+                <button onclick="setZoom(1.25)" class="w-6 h-6 rounded bg-emerald-900/60 text-white font-bold hover:bg-accent-600 flex items-center justify-center text-xs">125%</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tech CEOs Quote Marquee Banner -->
+    <div class="bg-forest-950/90 border-b border-emerald-900/80 py-2.5 overflow-hidden relative z-10">
+        <div class="animate-quotes text-xs text-emerald-200 font-medium">
+            <div class="flex items-center space-x-12 px-6 shrink-0">
+                <span class="flex items-center gap-2"><i class="fa-brands fa-openai text-white text-base"></i> <strong>Sam Altman (OpenAI):</strong> "The best capstones solve one real problem exceptionally well with AI."</span>
+                <span class="flex items-center gap-2"><i class="fa-brands fa-microsoft text-cyan-400 text-base"></i> <strong>Satya Nadella (Microsoft):</strong> "Empowering students to build software that creates real utility is the core of engineering."</span>
+                <span class="flex items-center gap-2"><i class="fa-brands fa-google text-rose-400 text-base"></i> <strong>Sundar Pichai (Google):</strong> "Focus on finishable MVPs first. Novelty combined with clean execution wins."</span>
+                <span class="flex items-center gap-2"><i class="fa-solid fa-microchip text-emerald-400 text-base"></i> <strong>Jensen Huang (NVIDIA):</strong> "The future belongs to engineers turning raw data into real-time intelligent agents."</span>
+            </div>
+            <div class="flex items-center space-x-12 px-6 shrink-0">
+                <span class="flex items-center gap-2"><i class="fa-brands fa-openai text-white text-base"></i> <strong>Sam Altman (OpenAI):</strong> "The best capstones solve one real problem exceptionally well with AI."</span>
+                <span class="flex items-center gap-2"><i class="fa-brands fa-microsoft text-cyan-400 text-base"></i> <strong>Satya Nadella (Microsoft):</strong> "Empowering students to build software that creates real utility is the core of engineering."</span>
+                <span class="flex items-center gap-2"><i class="fa-brands fa-google text-rose-400 text-base"></i> <strong>Sundar Pichai (Google):</strong> "Focus on finishable MVPs first. Novelty combined with clean execution wins."</span>
+                <span class="flex items-center gap-2"><i class="fa-solid fa-microchip text-emerald-400 text-base"></i> <strong>Jensen Huang (NVIDIA):</strong> "The future belongs to engineers turning raw data into real-time intelligent agents."</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 relative z-10">
+
+        <!-- PAGE 1: HOME DASHBOARD -->
+        <section id="page-home" class="space-y-8">
+            <div class="glass-3d rounded-3xl p-8 sm:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8 border border-emerald-500/20">
+                <div class="space-y-4 max-w-2xl">
+                    <span class="px-3.5 py-1 rounded-full bg-accent-500/20 text-accent-300 text-xs font-bold border border-accent-500/30">
+                        3D Glassmorphic AI Mentoring Engine
+                    </span>
+                    <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
+                        Generate Scoped, Judge-Winning Capstone Projects.
+                    </h1>
+                    <p class="text-emerald-100/90 text-sm sm:text-base leading-relaxed">
+                        Input your skills, profile level (Beginner, Intern, or Final-Year Student), and time budget. Antigravity analyzes your profile and generates 3 buildable ideas with explicit <strong class="text-gold-400">AI Top Recommendations</strong>.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <button onclick="navigateTo('generator')" class="btn-3d px-6 py-3.5 rounded-xl bg-gradient-to-r from-accent-500 to-emerald-600 text-white font-black text-sm shadow-xl shadow-accent-500/25 hover:from-accent-400 hover:to-emerald-500 flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>Launch AI Generator</span>
+                        </button>
+                        <button onclick="navigateTo('candidates')" class="btn-3d px-6 py-3.5 rounded-xl bg-forest-950/80 hover:bg-forest-900 text-emerald-300 font-bold text-sm border border-emerald-500/30 flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <span>Browse 8 Curated Blueprints</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-80 glass-3d p-6 rounded-2xl border border-emerald-500/30 space-y-4 text-xs">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-star text-gold-400 text-xl"></i>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">AI Recommendation Engine</h4>
+                            <p class="text-emerald-200/80">Highlights the single best project fit</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-cube text-accent-400 text-xl"></i>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">3D Interactive Depth UI</h4>
+                            <p class="text-emerald-200/80">Dynamic pop selection effects</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-file-pdf text-rose-400 text-xl"></i>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Instant PDF Brief Exporter</h4>
+                            <p class="text-emerald-200/80">Ready for professor submission</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Start Domain Cards -->
+            <div>
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-compass text-accent-400"></i> Explore Capstone Domains
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div onclick="selectDomainAndGo('Software Engineering')" class="glass-3d p-5 rounded-2xl cursor-pointer space-y-2">
+                        <div class="w-9 h-9 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-lg border border-blue-500/30">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm">Software Engineering</h4>
+                        <p class="text-xs text-emerald-200/70">Code review bots, microservice health, & issue triage.</p>
+                    </div>
+
+                    <div onclick="selectDomainAndGo('Data Science')" class="glass-3d p-5 rounded-2xl cursor-pointer space-y-2">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg border border-emerald-500/30">
+                            <i class="fa-solid fa-chart-pie"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm">Data Science & ML</h4>
+                        <p class="text-xs text-emerald-200/70">Placement predictors, academic risk modeling, & forecasting.</p>
+                    </div>
+
+                    <div onclick="selectDomainAndGo('NLP')" class="glass-3d p-5 rounded-2xl cursor-pointer space-y-2">
+                        <div class="w-9 h-9 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-lg border border-purple-500/30">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm">NLP & LLMs</h4>
+                        <p class="text-xs text-emerald-200/70">AI mentors, research synthesizers, & claim verification.</p>
+                    </div>
+
+                    <div onclick="selectDomainAndGo('Computer Vision')" class="glass-3d p-5 rounded-2xl cursor-pointer space-y-2">
+                        <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg border border-amber-500/30">
+                            <i class="fa-solid fa-eye"></i>
+                        </div>
+                        <h4 class="font-bold text-white text-sm">Computer Vision</h4>
+                        <p class="text-xs text-emerald-200/70">Attendance loggers, safety PPE monitors, & touchless UI.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- PAGE 2: IDEA GENERATOR WIZARD -->
+        <section id="page-generator" class="hidden space-y-8">
+            <div class="max-w-3xl mx-auto text-center space-y-2">
+                <h2 class="text-2xl font-black text-white">Configure Your Project Profile & Constraints</h2>
+                <p class="text-xs sm:text-sm text-emerald-200/80">Select your profile level (one by one), skills, and multiple interest domains.</p>
+            </div>
+
+            <!-- Form Card with 3D Depth -->
+            <div class="glass-3d rounded-3xl p-6 sm:p-8 max-w-4xl mx-auto space-y-6">
+                <form onsubmit="handleGenerate(event)" class="space-y-6">
+
+                    <!-- Section 0: Target Profile Selector (Single Selection) -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-emerald-400 tracking-wider mb-2">
+                            Step 1: Experience Level / Profile (Select One)
+                        </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3" id="profile-selector">
+                            <button type="button" onclick="setProfile('Beginner Student')" id="prof-beginner" class="prof-card btn-3d p-4 rounded-2xl border text-xs font-bold text-left flex flex-col justify-between space-y-1 glass-3d border-emerald-800">
+                                <span class="flex items-center gap-1.5 text-white"><i class="fa-solid fa-seedling text-emerald-400"></i> Beginner Student</span>
+                                <span class="text-[10px] text-emerald-200/70 font-normal">Pretrained models, simple scope, low learning curve</span>
+                            </button>
+                            <button type="button" onclick="setProfile('Intern / Junior Developer')" id="prof-intern" class="prof-card btn-3d p-4 rounded-2xl border text-xs font-bold text-left flex flex-col justify-between space-y-1 glass-3d border-emerald-800">
+                                <span class="flex items-center gap-1.5 text-white"><i class="fa-solid fa-briefcase text-blue-400"></i> Intern / Junior Dev</span>
+                                <span class="text-[10px] text-emerald-200/70 font-normal">Clean REST APIs, fullstack, standard industry stack</span>
+                            </button>
+                            <button type="button" onclick="setProfile('Final-Year Student')" id="prof-finalyear" class="prof-card btn-3d p-4 rounded-2xl border text-xs font-bold text-left flex flex-col justify-between space-y-1 glass-3d border-emerald-800 active-3d">
+                                <span class="flex items-center gap-1.5 text-white"><i class="fa-solid fa-graduation-cap text-gold-400"></i> Final-Year Capstone</span>
+                                <span class="text-[10px] text-emerald-100 font-normal">Multi-component systems, ML pipelines, judge ready</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Section 1: Skills -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-emerald-400 tracking-wider mb-2">
+                            Step 2: Programming Languages & Tools
+                        </label>
+                        <div class="flex flex-wrap gap-2 mb-3" id="skill-chips-group">
+                            <button type="button" onclick="toggleSkill('Python')" class="skill-btn btn-3d px-3.5 py-2 rounded-xl text-xs font-semibold bg-forest-950 text-emerald-200 border border-emerald-800">Python</button>
+                            <button type="button" onclick="toggleSkill('React')" class="skill-btn btn-3d px-3.5 py-2 rounded-xl text-xs font-semibold bg-forest-950 text-emerald-200 border border-emerald-800">React</button>
+                            <button type="button" onclick="toggleSkill('SQL')" class="skill-btn btn-3d px-3.5 py-2 rounded-xl text-xs font-semibold bg-forest-950 text-emerald-200 border border-emerald-800">SQL</button>
+                            <button type="button" onclick="toggleSkill('FastAPI')" class="skill-btn btn-3d px-3.5 py-2 rounded-xl text-xs font-semibold bg-forest-950 text-emerald-200 border border-emerald-800">FastAPI</button>
+                            <button type="button" onclick="toggleSkill('Node.js')" class="skill-btn btn-3d px-3.5 py-2 rounded-xl text-xs font-semibold bg-forest-950 text-emerald-200 border border-emerald-800">Node.js</button>
+                            <button type="button" onclick="toggleSkill('OpenCV')" class="skill-btn btn-3d px-3.5 py-2 rounded-xl text-xs font-semibold bg-forest-950 text-emerald-200 border border-emerald-800">OpenCV</button>
+                            <button type="button" onclick="toggleSkill('PyTorch')" class="skill-btn btn-3d px-3.5 py-2 rounded-xl text-xs font-semibold bg-forest-950 text-emerald-200 border border-emerald-800">PyTorch</button>
+                            <button type="button" onclick="toggleSkill('Scikit-Learn')" class="skill-btn btn-3d px-3.5 py-2 rounded-xl text-xs font-semibold bg-forest-950 text-emerald-200 border border-emerald-800">Scikit-Learn</button>
+                            <button type="button" onclick="toggleSkill('Docker')" class="skill-btn btn-3d px-3.5 py-2 rounded-xl text-xs font-semibold bg-forest-950 text-emerald-200 border border-emerald-800">Docker</button>
+                        </div>
+                        <input type="text" id="custom-skills" placeholder="Add custom skills (e.g. C++, Java, AWS)" 
+                               class="w-full bg-forest-950 border border-emerald-800 rounded-xl px-4 py-2.5 text-xs text-white focus:border-accent-400 focus:outline-none">
+                    </div>
+
+                    <!-- Section 2: Multi-Select Interest Domains -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-xs font-bold uppercase text-emerald-400 tracking-wider">
+                                Step 3: Interest Domain(s) (Multiple Allowed)
+                            </label>
+                            <span class="text-[11px] text-accent-400 font-semibold">Toggle any domain</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2" id="domain-pill-group">
+                            <button type="button" onclick="toggleDomain('Software Engineering')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-accent-600 text-white border-accent-400 active-3d">Software Engineering</button>
+                            <button type="button" onclick="toggleDomain('Data Science')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Data Science</button>
+                            <button type="button" onclick="toggleDomain('NLP')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">NLP & LLMs</button>
+                            <button type="button" onclick="toggleDomain('Computer Vision')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Computer Vision</button>
+                            <button type="button" onclick="toggleDomain('Healthcare + ML')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Healthcare</button>
+                            <button type="button" onclick="toggleDomain('Fintech')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Fintech</button>
+                            <button type="button" onclick="toggleDomain('Sustainability / IoT')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Sustainability / IoT</button>
+                            <button type="button" onclick="toggleDomain('Cyber Security')" class="domain-pill btn-3d px-3.5 py-2 rounded-xl text-xs font-bold border bg-forest-950 text-emerald-200 border-emerald-800">Cyber Security</button>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Time, Team & Hardware -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-emerald-300 mb-1">
+                                <span>Available Time</span>
+                                <span id="time-val-text" class="text-accent-400">8 Weeks</span>
+                            </div>
+                            <input type="range" id="time-range" min="1" max="16" value="8" oninput="document.getElementById('time-val-text').innerText = this.value + ' Weeks'"
+                                   class="w-full accent-accent-500">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-300 mb-1">Team Size</label>
+                            <select id="team-select" class="w-full bg-forest-950 border border-emerald-800 rounded-xl px-3 py-2 text-xs text-white">
+                                <option value="1">Solo (1 Person)</option>
+                                <option value="2" selected>Small Team (2 People)</option>
+                                <option value="4">Team (3-4 People)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-300 mb-1">Hardware Constraints</label>
+                            <select id="hardware-select" class="w-full bg-forest-950 border border-emerald-800 rounded-xl px-3 py-2 text-xs text-white">
+                                <option value="None / Low Spec Laptop">Standard Laptop (CPU Only)</option>
+                                <option value="GPU Access (Colab / Local GPU)">GPU Access (Colab / RTX)</option>
+                                <option value="Cloud Credits ($100 API)">Cloud Credits ($100 API)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-4 flex justify-center">
+                        <button type="submit" id="submit-gen-btn" class="btn-3d w-full sm:w-auto px-10 py-4 rounded-2xl bg-gradient-to-r from-accent-500 via-emerald-600 to-teal-500 hover:from-accent-400 hover:to-teal-400 text-white font-black text-sm shadow-xl shadow-accent-500/25 flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+                            <span>Generate 3 Project Ideas</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Loading State -->
+            <div id="gen-loading" class="hidden max-w-xl mx-auto glass-3d p-8 rounded-3xl text-center space-y-4">
+                <div class="w-14 h-14 rounded-full bg-accent-500/20 text-accent-400 flex items-center justify-center mx-auto text-2xl animate-bounce border border-accent-500/30">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <h3 class="text-base font-bold text-white" id="loading-msg">Analyzing target profile & domains...</h3>
+                <div class="w-full bg-forest-950 h-2.5 rounded-full overflow-hidden border border-emerald-800">
+                    <div id="loading-bar" class="bg-gradient-to-r from-accent-400 to-emerald-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+                <p class="text-xs text-emerald-200/70">Computing AI Top Recommendation and data platform sources...</p>
+            </div>
+
+            <!-- Generated Ideas Results Grid -->
+            <div id="gen-results" class="space-y-6 hidden">
+                <div id="results-summary" class="glass-3d p-4 rounded-2xl text-xs font-medium text-emerald-200 flex items-center justify-between border border-accent-500/30">
+                    <span id="summary-msg"></span>
+                    <span class="px-3 py-1 bg-accent-600 text-white rounded-full font-bold text-[10px]">100% Feasibility Verified</span>
+                </div>
+
+                <div id="ideas-container" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+            </div>
+        </section>
+
+
+        <!-- PAGE 3: CURATED BLUEPRINTS -->
+        <section id="page-candidates" class="hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-emerald-800/60">
+                <div>
+                    <h2 class="text-2xl font-black text-white">Curated Domain Blueprints</h2>
+                    <p class="text-xs text-emerald-200/70">Pre-vetted capstone project blueprints with explicit data platform sources.</p>
+                </div>
+                <div class="flex flex-wrap gap-1.5" id="cand-filter-bar">
+                    <button onclick="filterCandidates('all')" class="cand-tab btn-3d px-3 py-1.5 rounded-xl text-xs font-bold bg-accent-600 text-white">All</button>
+                    <button onclick="filterCandidates('Software Engineering')" class="cand-tab btn-3d px-3 py-1.5 rounded-xl text-xs font-medium glass-3d text-emerald-200">Software Eng</button>
+                    <button onclick="filterCandidates('Data Science')" class="cand-tab btn-3d px-3 py-1.5 rounded-xl text-xs font-medium glass-3d text-emerald-200">Data Science</button>
+                    <button onclick="filterCandidates('NLP')" class="cand-tab btn-3d px-3 py-1.5 rounded-xl text-xs font-medium glass-3d text-emerald-200">NLP</button>
+                    <button onclick="filterCandidates('Computer Vision')" class="cand-tab btn-3d px-3 py-1.5 rounded-xl text-xs font-medium glass-3d text-emerald-200">Vision</button>
+                    <button onclick="filterCandidates('Healthcare')" class="cand-tab btn-3d px-3 py-1.5 rounded-xl text-xs font-medium glass-3d text-emerald-200">Healthcare</button>
+                    <button onclick="filterCandidates('Fintech')" class="cand-tab btn-3d px-3 py-1.5 rounded-xl text-xs font-medium glass-3d text-emerald-200">Fintech</button>
+                    <button onclick="filterCandidates('Sustainability')" class="cand-tab btn-3d px-3 py-1.5 rounded-xl text-xs font-medium glass-3d text-emerald-200">Sustainability</button>
+                    <button onclick="filterCandidates('Cyber Security')" class="cand-tab btn-3d px-3 py-1.5 rounded-xl text-xs font-medium glass-3d text-emerald-200">Security</button>
+                </div>
+            </div>
+
+            <div id="candidates-deck" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </section>
+
+
+        <!-- PAGE 4: DEEP DIVE MENTOR VIEW -->
+        <section id="page-deepdive" class="hidden space-y-6">
+            <div id="deepdive-header" class="glass-3d p-6 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-emerald-500/30">
+                <div>
+                    <span id="dd-domain-badge" class="px-2.5 py-1 rounded-md bg-accent-500/20 text-accent-300 text-xs font-bold border border-accent-500/30">
+                        Select a Project
+                    </span>
+                    <h2 id="dd-title" class="text-xl font-black text-white mt-1">Deep-Dive Implementation Blueprint</h2>
+                    <p id="dd-pitch" class="text-xs text-emerald-200/70">Inspect project-specific build order, features to skip, and technical blocker fixes.</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="exportDeepDivePDF()" class="btn-3d px-4 py-2 rounded-xl bg-forest-950 text-white font-bold text-xs hover:bg-emerald-900 border border-emerald-700 flex items-center space-x-2">
+                        <i class="fa-solid fa-file-pdf text-rose-400"></i>
+                        <span>Export PDF Brief</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="deepdive-content" class="glass-3d p-6 sm:p-8 rounded-3xl space-y-8 border border-emerald-500/20">
+                <div class="text-center py-12 text-emerald-200/50 space-y-2">
+                    <i class="fa-solid fa-cube text-3xl text-accent-400"></i>
+                    <h3 class="text-base font-bold text-white">No Project Selected Yet</h3>
+                    <p class="text-xs">Click <strong>"Deep Dive Mentor"</strong> on any project card in the Generator or Blueprints tab to view its step-by-step implementation plan.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-forest-950 border-t border-emerald-900/80 py-6 text-center text-xs text-emerald-400/60 relative z-10">
+        <p>Antigravity AG 3D Capstone AI Mentor &bull; Beginner, Intern & Final-Year Student Scoper.</p>
+    </footer>
+
+    <!-- App JavaScript Logic -->
+    <script>
+        let selectedProfile = 'Final-Year Student';
+        let selectedSkills = ['Python', 'React'];
+        let selectedDomains = ['Software Engineering'];
+        let currentIdeas = [];
+        let allCandidates = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initMatrixRain();
+            fetchCandidates();
+            updateSkillButtons();
+            setProfile('Final-Year Student');
+        });
+
+        // Matrix 0 and 1 Bits Rain Animation
+        function initMatrixRain() {
+            const canvas = document.getElementById('matrix-canvas');
+            const ctx = canvas.getContext('2d');
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const characters = ['0', '1'];
+            const fontSize = 14;
+            const columns = Math.floor(canvas.width / fontSize);
+            const drops = Array(columns).fill(1);
+
+            function draw() {
+                ctx.fillStyle = 'rgba(1, 23, 17, 0.08)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#34d399';
+                ctx.font = `${fontSize}px 'JetBrains Mono', monospace`;
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters[Math.floor(Math.random() * characters.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            setInterval(draw, 45);
+        }
+
+        function setZoom(zoomLevel) {
+            document.body.style.transform = `scale(${zoomLevel})`;
+            document.body.style.width = `${100 / zoomLevel}%`;
+        }
+
+        function navigateTo(pageId) {
+            ['home', 'generator', 'candidates', 'deepdive'].forEach(p => {
+                document.getElementById(`page-${p}`).classList.add('hidden');
+                document.getElementById(`nav-${p}`).classList.remove('bg-emerald-900/60', 'text-accent-400', 'border-accent-500/30');
+                document.getElementById(`nav-${p}`).classList.add('text-emerald-200');
+            });
+
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+            document.getElementById(`nav-${pageId}`).classList.add('bg-emerald-900/60', 'text-accent-400', 'border-accent-500/30');
+            document.getElementById(`nav-${pageId}`).classList.remove('text-emerald-200');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectDomainAndGo(domainName) {
+            selectedDomains = [domainName];
+            updateDomainPills();
+            navigateTo('generator');
+        }
+
+        // Single Selection Profile Selector
+        function setProfile(profile) {
+            selectedProfile = profile;
+            const profileMap = {
+                'Beginner Student': 'prof-beginner',
+                'Intern / Junior Developer': 'prof-intern',
+                'Final-Year Student': 'prof-finalyear'
+            };
+
+            document.querySelectorAll('.prof-card').forEach(btn => {
+                btn.classList.remove('active-3d');
+                btn.classList.add('glass-3d');
+            });
+
+            const targetId = profileMap[profile];
+            if (targetId) {
+                const active = document.getElementById(targetId);
+                if (active) {
+                    active.classList.add('active-3d');
+                    active.classList.remove('glass-3d');
+                }
+            }
+        }
+
+        function toggleSkill(skill) {
+            const idx = selectedSkills.indexOf(skill);
+            if (idx > -1) selectedSkills.splice(idx, 1);
+            else selectedSkills.push(skill);
+            updateSkillButtons();
+        }
+
+        function updateSkillButtons() {
+            document.querySelectorAll('.skill-btn').forEach(btn => {
+                const text = btn.innerText.trim();
+                if (selectedSkills.includes(text)) {
+                    btn.classList.add('active-3d');
+                    btn.classList.remove('bg-forest-950', 'text-emerald-200', 'border-emerald-800');
+                } else {
+                    btn.classList.remove('active-3d');
+                    btn.classList.add('bg-forest-950', 'text-emerald-200', 'border-emerald-800');
+                }
+            });
+        }
+
+        function toggleDomain(dom) {
+            const idx = selectedDomains.indexOf(dom);
+            if (idx > -1) {
+                if (selectedDomains.length > 1) selectedDomains.splice(idx, 1);
+            } else {
+                selectedDomains.push(dom);
+            }
+            updateDomainPills();
+        }
+
+        function updateDomainPills() {
+            document.querySelectorAll('.domain-pill').forEach(btn => {
+                const text = btn.innerText.trim();
+                if (selectedDomains.includes(text)) {
+                    btn.classList.add('active-3d');
+                    btn.classList.remove('bg-forest-950', 'text-emerald-200', 'border-emerald-800');
+                } else {
+                    btn.classList.remove('active-3d');
+                    btn.classList.add('bg-forest-950', 'text-emerald-200', 'border-emerald-800');
+                }
+            });
+        }
+
+        async function fetchCandidates() {
+            try {
+                const res = await fetch('/api/candidate-ideas');
+                const data = await res.json();
+                allCandidates = data.candidate_ideas || [];
+                renderCandidates(allCandidates);
+            } catch (e) {
+                console.error('Error loading candidates', e);
+            }
+        }
+
+        async function handleGenerate(e) {
+            e.preventDefault();
+
+            const customVal = document.getElementById('custom-skills').value.trim();
+            let skillsList = [...selectedSkills];
+            if (customVal) {
+                const splits = customVal.split(',').map(s => s.trim()).filter(Boolean);
+                skillsList = [...new Set([...skillsList, ...splits])];
+            }
+
+            const payload = {
+                skills: skillsList.length ? skillsList : ['Python', 'SQL'],
+                domains: selectedDomains.length ? selectedDomains : ['Software Engineering'],
+                available_time_weeks: parseInt(document.getElementById('time-range').value),
+                team_size: parseInt(document.getElementById('team-select').value),
+                target_profile: selectedProfile,
+                hardware_constraints: document.getElementById('hardware-select').value,
+                difficulty: 'Intermediate'
+            };
+
+            const loadingBox = document.getElementById('gen-loading');
+            const loadingBar = document.getElementById('loading-bar');
+            const loadingMsg = document.getElementById('loading-msg');
+
+            loadingBox.classList.remove('hidden');
+            document.getElementById('gen-results').classList.add('hidden');
+
+            let progress = 0;
+            const msgs = [
+                `Analyzing single profile: ${selectedProfile}...`,
+                `Computing AI Top Recommendation match score...`,
+                `Building 3D milestone path in ${skillsList[0] || 'Python'}...`,
+                `Verifying data platform sources & judge demo scripts...`
+            ];
+            let msgIdx = 0;
+
+            const interval = setInterval(() => {
+                progress += 25;
+                loadingBar.style.width = `${progress}%`;
+                if (msgIdx < msgs.length) {
+                    loadingMsg.innerText = msgs[msgIdx];
+                    msgIdx++;
+                }
+            }, 300);
+
+            try {
+                const res = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                currentIdeas = data.ideas || [];
+
+                clearInterval(interval);
+                loadingBar.style.width = '100%';
+
+                setTimeout(() => {
+                    loadingBox.classList.add('hidden');
+                    document.getElementById('gen-results').classList.remove('hidden');
+                    document.getElementById('summary-msg').innerText = data.student_profile_summary;
+                    renderGeneratedIdeas(currentIdeas, payload);
+                }, 200);
+
+            } catch (err) {
+                clearInterval(interval);
+                alert('Generation failed: ' + err.message);
+                loadingBox.classList.add('hidden');
+            }
+        }
+
+        function renderGeneratedIdeas(ideas, payload) {
+            const container = document.getElementById('ideas-container');
+            container.innerHTML = '';
+
+            ideas.forEach((idea, index) => {
+                const card = document.createElement('div');
+                const isTop = idea.is_top_recommendation || (index === 0);
+                
+                card.className = `glass-3d p-6 rounded-3xl flex flex-col justify-between space-y-4 ${isTop ? 'border-gold-400 gold-glow bg-forest-900/90' : 'border-emerald-500/20'}`;
+
+                const featuresList = (idea.core_features || []).map(f => 
+                    `<li class="flex items-start space-x-2 text-xs text-emerald-100">
+                        <i class="fa-solid fa-circle-check text-accent-400 mt-0.5"></i>
+                        <span>${f}</span>
+                     </li>`
+                ).join('');
+
+                const techChips = (idea.tech_stack || []).map(t => 
+                    `<span class="px-2.5 py-1 rounded-lg bg-forest-950 text-emerald-300 text-[11px] font-semibold border border-emerald-800" title="${t.justification}">
+                        ${t.tool}
+                     </span>`
+                ).join('');
+
+                const milestoneList = (idea.milestones || []).map(m => 
+                    `<div class="text-[11px] text-emerald-200/80 flex items-start space-x-1.5">
+                        <i class="fa-solid fa-angle-right text-accent-400 mt-0.5"></i>
+                        <span>${m}</span>
+                     </div>`
+                ).join('');
+
+                const recBanner = isTop ? `
+                    <div class="p-3 rounded-2xl bg-gradient-to-r from-amber-500/20 to-gold-500/20 border border-gold-400/50 text-xs text-gold-300 font-bold space-y-1">
+                        <span class="flex items-center gap-1.5 text-gold-400 text-sm">
+                            <i class="fa-solid fa-crown text-gold-400"></i> AI Top Recommended Choice
+                        </span>
+                        <p class="text-[11px] text-gold-200/90 font-normal leading-relaxed">
+                            ${idea.ai_recommendation_reason || 'Highest feasibility-to-impact score for your selected profile.'}
+                        </p>
+                    </div>
+                ` : '';
+
+                card.innerHTML = `
+                    <div class="space-y-4">
+                        ${recBanner}
+
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-1 rounded-md bg-accent-500/20 text-accent-300 text-xs font-bold border border-accent-500/30">
+                                ${idea.domain}
+                            </span>
+                            <span class="text-xs font-bold text-emerald-400/60">Option #${index + 1}</span>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-black text-white leading-snug">${idea.title}</h3>
+                            <p class="text-xs font-medium text-accent-400 italic mt-0.5">${idea.pitch}</p>
+                        </div>
+
+                        <div class="p-2.5 rounded-xl bg-forest-950/80 border border-emerald-800 flex items-center justify-between text-xs">
+                            <span class="text-[11px] text-emerald-400 font-semibold">Data Platform:</span>
+                            <span class="px-2.5 py-1 rounded bg-accent-500/20 text-accent-300 font-bold text-[10px] border border-accent-500/30 flex items-center gap-1">
+                                <i class="fa-solid fa-database text-accent-400"></i> ${idea.data_platform_source || 'Kaggle Open Datasets'}
+                            </span>
+                        </div>
+
+                        <div class="p-3 rounded-2xl bg-forest-950/60 border border-emerald-800/80 text-xs text-emerald-100">
+                            <strong class="text-white block mb-1">Problem & Beneficiaries:</strong>
+                            ${idea.problem_and_beneficiaries}
+                        </div>
+
+                        <div>
+                            <strong class="text-xs text-white uppercase tracking-wider block mb-1.5">MVP Core Features:</strong>
+                            <ul class="space-y-1">${featuresList}</ul>
+                        </div>
+
+                        <div>
+                            <strong class="text-xs text-white uppercase tracking-wider block mb-1.5">Tech Stack:</strong>
+                            <div class="flex flex-wrap gap-1.5">${techChips}</div>
+                        </div>
+
+                        <div>
+                            <strong class="text-xs text-white uppercase tracking-wider block mb-1">Milestones (${payload.skills[0] || 'Python'}):</strong>
+                            <div class="space-y-1 bg-forest-950/60 p-3 rounded-xl border border-emerald-800/80">${milestoneList}</div>
+                        </div>
+
+                        ${idea.ethical_flags ? `
+                        <div class="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300">
+                            <strong class="text-amber-400 flex items-center gap-1"><i class="fa-solid fa-shield"></i> Ethical Note:</strong>
+                            <p class="text-[11px] mt-0.5">${idea.ethical_flags}</p>
+                        </div>` : ''}
+
+                        <div class="p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 text-xs text-purple-300">
+                            <strong class="text-purple-400 flex items-center gap-1"><i class="fa-solid fa-star text-purple-400"></i> Stretch Feature:</strong>
+                            <p class="text-[11px] mt-0.5">${idea.stretch_feature}</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-emerald-800/60">
+                        <button onclick="loadDeepDiveFromGenerated(${index})" 
+                                class="btn-3d w-full py-3 rounded-xl bg-accent-600 hover:bg-accent-500 text-white font-bold text-xs shadow-lg shadow-accent-500/20 flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-code"></i>
+                            <span>Deep Dive Mentor</span>
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function renderCandidates(candidates) {
+            const deck = document.getElementById('candidates-deck');
+            deck.innerHTML = '';
+
+            candidates.forEach(cand => {
+                const card = document.createElement('div');
+                card.className = 'glass-3d p-6 rounded-3xl flex flex-col justify-between space-y-4 border border-emerald-500/20';
+
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-1 rounded-md bg-accent-500/20 text-accent-300 text-xs font-bold border border-accent-500/30">
+                                ${cand.domain}
+                            </span>
+                            <span class="px-2 py-0.5 bg-forest-950 text-emerald-300 rounded text-[10px] font-semibold border border-emerald-800">
+                                ${cand.target_profile || 'All Levels'}
+                            </span>
+                        </div>
+                        <h3 class="text-base font-bold text-white leading-snug">${cand.title}</h3>
+                        <p class="text-xs text-emerald-200/80">${cand.pitch}</p>
+
+                        <div class="text-[11px] text-emerald-300 font-medium flex items-center gap-1">
+                            <i class="fa-solid fa-database text-accent-400"></i> Platform: <strong class="text-white">${cand.data_platform_source || 'Kaggle Open Datasets'}</strong>
+                        </div>
+
+                        <div>
+                            <strong class="text-xs text-white block mb-1">Core MVP Features:</strong>
+                            <ul class="space-y-1 text-xs text-emerald-200/80">
+                                ${(cand.core_features || []).slice(0, 3).map(f => `<li>&bull; ${f}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-emerald-800/60">
+                        <button onclick="loadDeepDiveFromCandidate('${cand.id}')" 
+                                class="btn-3d w-full py-2.5 rounded-xl bg-forest-950 hover:bg-accent-600 text-emerald-200 hover:text-white text-xs font-bold transition flex items-center justify-center space-x-1.5 border border-emerald-800">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <span>View Deep-Dive Plan</span>
+                        </button>
+                    </div>
+                `;
+
+                deck.appendChild(card);
+            });
+        }
+
+        function filterCandidates(domain) {
+            document.querySelectorAll('.cand-tab').forEach(btn => {
+                btn.classList.remove('bg-accent-600', 'text-white');
+                btn.classList.add('glass-3d', 'text-emerald-200');
+            });
+            event.target.classList.add('bg-accent-600', 'text-white');
+
+            if (domain === 'all') {
+                renderCandidates(allCandidates);
+            } else {
+                const filtered = allCandidates.filter(c => c.domain.toLowerCase().includes(domain.toLowerCase()));
+                renderCandidates(filtered);
+            }
+        }
+
+        async function loadDeepDiveFromGenerated(index) {
+            const idea = currentIdeas[index];
+            if (!idea) return;
+
+            navigateTo('deepdive');
+            document.getElementById('dd-domain-badge').innerText = `${idea.domain} • ${idea.target_profile || selectedProfile}`;
+            document.getElementById('dd-title').innerText = idea.title;
+            document.getElementById('dd-pitch').innerText = idea.pitch;
+
+            const contentDiv = document.getElementById('deepdive-content');
+            contentDiv.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="inline-block w-8 h-8 border-4 border-accent-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-xs text-emerald-300 mt-2">Generating Implementation Plan for ${idea.domain}...</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch('/api/elaborate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: idea.title,
+                        pitch: idea.pitch,
+                        skills: selectedSkills,
+                        available_time_weeks: 8,
+                        team_size: 2,
+                        target_profile: idea.target_profile || selectedProfile,
+                        hardware_constraints: "None",
+                        domain: idea.domain
+                    })
+                });
+                const elab = await res.json();
+                renderDeepDiveUI(elab);
+            } catch (e) {
+                contentDiv.innerHTML = `<p class="text-rose-400 font-bold text-xs">Error loading plan: ${e.message}</p>`;
+            }
+        }
+
+        function loadDeepDiveFromCandidate(candId) {
+            const cand = allCandidates.find(c => c.id === candId);
+            if (!cand) return;
+
+            navigateTo('deepdive');
+            document.getElementById('dd-domain-badge').innerText = `${cand.domain} • ${cand.target_profile || 'All Levels'}`;
+            document.getElementById('dd-title').innerText = cand.title;
+            document.getElementById('dd-pitch').innerText = cand.pitch;
+
+            const elab = cand.elaboration || {
+                folder_structure: "project/\n├── app.py\n└── static/",
+                mvp_feature_cut: cand.core_features,
+                features_to_skip: ["OAuth user login", "Multi-region cluster"],
+                step_by_step_build_order: ["1. Build backend", "2. Connect frontend UI"],
+                top_3_blockers: [],
+                demo_script_60s: "Show judge demo in 60s.",
+                wow_factor_20min: "Add instant export button."
+            };
+
+            renderDeepDiveUI(elab);
+        }
+
+        function renderDeepDiveUI(elab) {
+            const contentDiv = document.getElementById('deepdive-content');
+
+            const mvpHtml = (elab.mvp_feature_cut || []).map(f => `
+                <li class="flex items-center space-x-2 text-xs text-accent-300">
+                    <i class="fa-solid fa-circle-check text-accent-400"></i>
+                    <span>${f}</span>
+                </li>
+            `).join('');
+
+            const skipHtml = (elab.features_to_skip || []).map(f => `
+                <li class="flex items-center space-x-2 text-xs text-rose-300 line-through">
+                    <i class="fa-solid fa-ban text-rose-400"></i>
+                    <span>${f}</span>
+                </li>
+            `).join('');
+
+            const buildOrderHtml = (elab.step_by_step_build_order || []).map(s => `
+                <li class="flex items-start space-x-2.5 text-xs text-emerald-100">
+                    <i class="fa-solid fa-chevron-right text-accent-400 mt-0.5"></i>
+                    <span>${s}</span>
+                </li>
+            `).join('');
+
+            const blockersHtml = (elab.top_3_blockers || []).map((b, i) => `
+                <div class="p-3.5 rounded-xl bg-forest-950 border border-emerald-800 space-y-1">
+                    <span class="font-bold text-rose-400 text-xs flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Blocker #${i+1}: ${b.blocker}
+                    </span>
+                    <p class="text-xs text-accent-300 font-mono pl-5">Fix: ${b.fix}</p>
+                </div>
+            `).join('');
+
+            contentDiv.innerHTML = `
+                <div class="space-y-6">
+
+                    <!-- Section 1: Folder Structure -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                            <i class="fa-solid fa-folder-tree text-accent-400"></i> 1. Minimal File & Folder Structure
+                        </h4>
+                        <pre class="bg-forest-950 text-accent-400 p-4 rounded-2xl text-xs font-mono border border-emerald-800 overflow-x-auto">${elab.folder_structure}</pre>
+                    </div>
+
+                    <!-- Section 2: MVP Cut vs Unique Features to Skip -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-accent-500/10 border border-accent-500/30 space-y-2">
+                            <h4 class="font-bold text-xs uppercase text-accent-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-scissors"></i> MVP Cut (Build First):
+                            </h4>
+                            <ul class="space-y-1.5">${mvpHtml}</ul>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 space-y-2">
+                            <h4 class="font-bold text-xs uppercase text-rose-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-ban"></i> Domain-Specific Features to Skip:
+                            </h4>
+                            <ul class="space-y-1.5">${skipHtml}</ul>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Build Order -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list-ol text-gold-400"></i> 3. Sequential Build Order (No Blockers)
+                        </h4>
+                        <ul class="bg-forest-950 p-4 rounded-2xl border border-emerald-800 space-y-2">${buildOrderHtml}</ul>
+                    </div>
+
+                    <!-- Section 4: Blockers -->
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-sm text-white flex items-center gap-2">
+                            <i class="fa-solid fa-bug text-rose-400"></i> 4. Top 3 Technical Blockers & 1-Line Fixes
+                        </h4>
+                        <div class="space-y-2">${blockersHtml}</div>
+                    </div>
+
+                    <!-- Section 5 & 6: Demo Script & Wow Factor -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/30 space-y-1.5">
+                            <h4 class="font-bold text-xs uppercase text-blue-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-stopwatch text-blue-400"></i> 60-Second Judge Demo Script:
+                            </h4>
+                            <p class="text-xs text-blue-100 leading-relaxed italic">"${elab.demo_script_60s}"</p>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30 space-y-1.5">
+                            <h4 class="font-bold text-xs uppercase text-purple-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-wand-magic text-purple-400"></i> 20-Min "Wow Factor" Addition:
+                            </h4>
+                            <p class="text-xs text-purple-100 leading-relaxed">${elab.wow_factor_20min}</p>
+                        </div>
+                    </div>
+
+                </div>
+            `;
+        }
+
+        function exportDeepDivePDF() {
+            const contentDiv = document.getElementById('deepdive-content');
+            const title = document.getElementById('dd-title').innerText;
+
+            const opt = {
+                margin:       [0.5, 0.5, 0.5, 0.5],
+                filename:     `${title.toLowerCase().replace(/[^a-z0-9]/g, '_')}_brief.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#022c22' },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(contentDiv).save();
+        }
+    </script>
+</body>
+</html>
